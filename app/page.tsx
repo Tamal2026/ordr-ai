@@ -46,8 +46,8 @@ export default function Page() {
             Book in one tap.
           </h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-slate">
-            No forms, no phone tag. Say what you need across clinics, barbers, legal offices, or
-            restaurants OrdR AI matches you to three open slots in under two seconds.
+            No forms,no phone tag. Say what you need across clinics, barbers,legal offices, or
+            restaurants OrdR AI matches you to three open slot in under two seconds.
           </p>
 
           <div className="mt-8">
