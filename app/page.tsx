@@ -24,12 +24,7 @@ export default function Page() {
 
       try {
         const result = await sendVoiceRequest(rawQuery, category);
-        console.log("RAW RESULT:", result);
-        console.log(
-          "PRODUCTS TYPE:",
-          typeof result.products,
-          Array.isArray(result.products),
-        );
+      
         setServices(result.products);
       } catch (err) {
         console.log("CATCH ERROR:", err);
