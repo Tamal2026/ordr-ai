@@ -100,7 +100,7 @@ export default function Page() {
         {!loading && !services.length && (
           <p className="rounded-2xl border border-dashed border-line p-10 text-center text-sm text-slate">
             Speak a request or send the sample above to see three matches appear
-            here.
+            here .
           </p>
         )}
       </section>
