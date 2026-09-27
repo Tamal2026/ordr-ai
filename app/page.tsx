@@ -43,7 +43,7 @@ export default function Page() {
         <div>
           <span className="text-sm font-medium text-signal">OrdR AI</span>
           <h1 className="mt-4 font-display text-4xl font-medium leading-[1.1] text-ink md:text-5xl">
-            Speak it. See three.
+            Speak it. See three .
             <br />
             Book in one tap.
           </h1>
