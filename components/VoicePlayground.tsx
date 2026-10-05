@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import type { Category } from "@/lib/types";
 
@@ -13,17 +13,21 @@ const SAMPLE_PROMPTS: Record<Category, string> = {
 
 export default function VoicePlayground({
   category,
+  query,
+  onQueryChange,
   onTest,
   isRunning,
 }: {
   category: Category;
+  query: string;
+  onQueryChange: (v: string) => void;
   onTest: (query: string) => void;
   isRunning: boolean;
 }) {
-  const [query, setQuery] = useState(SAMPLE_PROMPTS[category]);
-
+  // ইউজার যদি নিজে কিছু না লিখে/বলে থাকে, তাহলেই শুধু ক্যাটাগরি বদলালে sample prompt বসবে
   useEffect(() => {
-    setQuery(SAMPLE_PROMPTS[category]);
+    if (!query) onQueryChange(SAMPLE_PROMPTS[category]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   return (
@@ -35,7 +39,7 @@ export default function VoicePlayground({
 
       <textarea
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => onQueryChange(e.target.value)}
         rows={2}
         className="focus-ring w-full resize-none rounded-xl border border-line bg-panel2 p-4 text-sm text-ink placeholder:text-slate/60"
         placeholder="Type what you'd say out loud…"

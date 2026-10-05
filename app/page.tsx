@@ -19,15 +19,21 @@ export default function Page() {
   const runIntent = useCallback(
     async (rawQuery: string) => {
       setLoading(true);
-      const intent = parseVoiceIntent(rawQuery, category);
-      setBudgetMax(intent.budgetMax);
+
+      // আগে transcript থেকে category বের করার চেষ্টা করুন
+      const detectedIntent = parseVoiceIntent(rawQuery, null); // null দিন, force করবেন না
+      const effectiveCategory = detectedIntent.category ?? category; // না পেলে pill-এর category ব্যবহার হবে
+
+      setCategory(effectiveCategory); // UI-তেও pill আপডেট করে দিন, যাতে ব্যবহারকারী বুঝতে পারে
+      setBudgetMax(detectedIntent.budgetMax);
 
       try {
-        const result = await sendVoiceRequest(rawQuery, category);
-      
-        setServices(result.products);
-      } catch (err) {
-        console.log("CATCH ERROR:", err);
+        const { products } = await sendVoiceRequest(
+          rawQuery,
+          effectiveCategory,
+        );
+        setServices(products);
+      } catch {
         setServices([]);
       } finally {
         setLoading(false);
