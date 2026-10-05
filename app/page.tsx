@@ -12,20 +12,20 @@ import type { Category, ServiceMatch } from "@/lib/types";
 
 export default function Page() {
   const [category, setCategory] = useState<Category>("medical");
+  const [typedQuery, setTypedQuery] = useState("");
   const [services, setServices] = useState<ServiceMatch[]>([]);
   const [budgetMax, setBudgetMax] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
-
   const runIntent = useCallback(
     async (rawQuery: string) => {
       setLoading(true);
 
-      // আগে transcript থেকে category বের করার চেষ্টা করুন
-      const detectedIntent = parseVoiceIntent(rawQuery, null); // null দিন, force করবেন না
-      const effectiveCategory = detectedIntent.category ?? category; // না পেলে pill-এর category ব্যবহার হবে
+      // আগে transcript থেকে category বের করার চেষ্টা করুন, pill-কে জোর করে বসাবেন না
+      const detected = parseVoiceIntent(rawQuery, null);
+      const effectiveCategory = detected.category ?? category;
 
-      setCategory(effectiveCategory); // UI-তেও pill আপডেট করে দিন, যাতে ব্যবহারকারী বুঝতে পারে
-      setBudgetMax(detectedIntent.budgetMax);
+      setCategory(effectiveCategory); // pill-টাও নিজে থেকে বদলে যাবে, ইউজার দেখতে পাবে
+      setBudgetMax(detected.budgetMax);
 
       try {
         const { products } = await sendVoiceRequest(
@@ -49,14 +49,14 @@ export default function Page() {
         <div>
           <span className="text-sm font-medium text-signal">OrdR AI</span>
           <h1 className="mt-4 font-display text-4xl font-medium leading-[1.1] text-ink md:text-5xl">
-            Speak it. See three .
+            Speak it. See three.
             <br />
             Book in one tap.
           </h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-slate">
-            No forms,no phone tag. Say what you need across clinics,
-            barbers,legal offices, or restaurants OrdR AI matches you to three
-            open slot in under two seconds.
+            No forms, no phone tag. Say what you need across clinics, barbers,
+            legal offices, or restaurants — OrdR AI matches you to three open
+            slots in under two seconds.
           </p>
 
           <div className="mt-8">
@@ -66,7 +66,10 @@ export default function Page() {
 
         <div className="flex justify-center">
           <VoiceOrb
-            onFinalTranscript={(t) => runIntent(t)}
+            onFinalTranscript={(t) => {
+              setTypedQuery(t);
+              runIntent(t);
+            }}
             disabled={loading}
           />
         </div>
@@ -76,6 +79,8 @@ export default function Page() {
       <section className="mt-20">
         <VoicePlayground
           category={category}
+          query={typedQuery}
+          onQueryChange={setTypedQuery}
           onTest={(q) => runIntent(q)}
           isRunning={loading}
         />
@@ -101,7 +106,7 @@ export default function Page() {
         {!loading && !services.length && (
           <p className="rounded-2xl border border-dashed border-line p-10 text-center text-sm text-slate">
             Speak a request or send the sample above to see three matches appear
-            here .
+            here.
           </p>
         )}
       </section>

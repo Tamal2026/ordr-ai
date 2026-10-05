@@ -24,7 +24,6 @@ export default function VoicePlayground({
   onTest: (query: string) => void;
   isRunning: boolean;
 }) {
-  // ইউজার যদি নিজে কিছু না লিখে/বলে থাকে, তাহলেই শুধু ক্যাটাগরি বদলালে sample prompt বসবে
   useEffect(() => {
     if (!query) onQueryChange(SAMPLE_PROMPTS[category]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
