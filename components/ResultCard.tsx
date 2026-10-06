@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import type { ServiceMatch } from "@/lib/types";
 
@@ -7,11 +8,14 @@ export default function ResultCard({
   service,
   budgetMax,
   index,
+  onBook,
 }: {
   service: ServiceMatch;
   budgetMax: number | null;
   index: number;
+  onBook: (service: ServiceMatch) => void;
 }) {
+  const [booked, setBooked] = useState(false);
   const underBudget = budgetMax !== null && service.price <= budgetMax;
 
   return (
@@ -52,16 +56,16 @@ export default function ResultCard({
 
         <p className="text-sm text-slate">{service.matchReason}</p>
 
-        <button className="focus-ring mt-3 flex items-center justify-center gap-2 rounded-xl border border-signal/40 bg-transparent py-2.5 text-sm font-medium text-signal transition-colors hover:bg-signal hover:text-base">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3z"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            />
-            <path d="M19 11a7 7 0 01-14 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-          </svg>
-          1-Click Voice Booking
+        <button
+          onClick={() => {
+            setBooked(true);
+            onBook(service);
+          }}
+          disabled={booked}
+          className="focus-ring mt-3 flex items-center justify-center gap-2 rounded-xl border border-signal/40 bg-transparent py-2.5 text-sm font-medium text-signal transition-colors hover:bg-signal hover:text-base disabled:cursor-default disabled:border-line disabled:text-slate disabled:hover:bg-transparent"
+        >
+         
+          {booked ? "Booked ✓" : "Click For Booking"}
         </button>
       </div>
     </motion.div>

@@ -16,10 +16,10 @@ export default function Page() {
   const [services, setServices] = useState<ServiceMatch[]>([]);
   const [cart, setCart] = useState<ServiceMatch[]>([]);
   const [aiMessage, setAiMessage] = useState<string | null>(null);
+  const [bookingMsg, setBookingMsg] = useState<string | null>(null);
   const [budgetMax, setBudgetMax] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // sessionId একবারই বানানো হয়, পুরো ব্রাউজার সেশন জুড়ে একই থাকে
   const [sessionId] = useState(() => {
     if (typeof window === "undefined") return "temp_session";
     let id = localStorage.getItem("ordr_session_id");
@@ -34,7 +34,6 @@ export default function Page() {
     async (rawQuery: string) => {
       setLoading(true);
 
-      // আগে transcript থেকে category বের করার চেষ্টা করুন, pill-কে জোর করে বসাবেন না
       const detected = parseVoiceIntent(rawQuery, null);
       const effectiveCategory = detected.category ?? category;
 
@@ -42,11 +41,11 @@ export default function Page() {
       setBudgetMax(detected.budgetMax);
 
       try {
-        const { products, cart: updatedCart, message } = await sendVoiceRequest(
-          rawQuery,
-          effectiveCategory,
-          sessionId
-        );
+        const {
+          products,
+          cart: updatedCart,
+          message,
+        } = await sendVoiceRequest(rawQuery, effectiveCategory, sessionId);
         setServices(products);
         setCart(updatedCart);
         setAiMessage(message);
@@ -59,6 +58,11 @@ export default function Page() {
     },
     [category, sessionId]
   );
+
+  const handleBook = useCallback((service: ServiceMatch) => {
+    setBookingMsg(`✓ Booked ${service.name}! Confirmation sent (demo).`);
+    setTimeout(() => setBookingMsg(null), 4000);
+  }, []);
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-16 md:py-24">
@@ -129,7 +133,9 @@ export default function Page() {
               >
                 <div>
                   <p className="text-sm font-medium text-ink">{item.name}</p>
-                  <p className="text-xs text-slate">${item.price.toFixed(2)} · ★{item.rating}</p>
+                  <p className="text-xs text-slate">
+                    ${item.price.toFixed(2)} · ★{item.rating}
+                  </p>
                 </div>
               </li>
             ))}
@@ -139,6 +145,15 @@ export default function Page() {
 
       {/* Results */}
       <section className="mt-14">
+        {bookingMsg && (
+          <motion.p
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 rounded-xl border border-signal/30 bg-signal/10 px-4 py-3 text-sm text-signal"
+          >
+            {bookingMsg}
+          </motion.p>
+        )}
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-display text-xl font-medium text-ink">
             Your matches
@@ -153,6 +168,7 @@ export default function Page() {
           services={services}
           budgetMax={budgetMax}
           loading={loading}
+          onBook={handleBook}
         />
         {!loading && !services.length && (
           <p className="rounded-2xl border border-dashed border-line p-10 text-center text-sm text-slate">

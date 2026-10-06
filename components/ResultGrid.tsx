@@ -8,10 +8,12 @@ export default function ResultGrid({
   services,
   budgetMax,
   loading,
+  onBook,
 }: {
   services: ServiceMatch[];
   budgetMax: number | null;
   loading: boolean;
+  onBook: (service: ServiceMatch) => void;
 }) {
   if (loading) {
     return (
@@ -32,7 +34,13 @@ export default function ResultGrid({
         className="grid grid-cols-1 gap-5 md:grid-cols-3"
       >
         {services.slice(0, 3).map((service, i) => (
-          <ResultCard key={service.id} service={service} budgetMax={budgetMax} index={i} />
+          <ResultCard
+            key={service.id}
+            service={service}
+            budgetMax={budgetMax}
+            index={i}
+            onBook={onBook}
+          />
         ))}
       </motion.div>
     </AnimatePresence>
