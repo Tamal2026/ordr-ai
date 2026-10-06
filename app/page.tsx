@@ -14,8 +14,22 @@ export default function Page() {
   const [category, setCategory] = useState<Category>("medical");
   const [typedQuery, setTypedQuery] = useState("");
   const [services, setServices] = useState<ServiceMatch[]>([]);
+  const [cart, setCart] = useState<ServiceMatch[]>([]);
+  const [aiMessage, setAiMessage] = useState<string | null>(null);
   const [budgetMax, setBudgetMax] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // sessionId একবারই বানানো হয়, পুরো ব্রাউজার সেশন জুড়ে একই থাকে
+  const [sessionId] = useState(() => {
+    if (typeof window === "undefined") return "temp_session";
+    let id = localStorage.getItem("ordr_session_id");
+    if (!id) {
+      id = `oa_${Date.now().toString(36)}`;
+      localStorage.setItem("ordr_session_id", id);
+    }
+    return id;
+  });
+
   const runIntent = useCallback(
     async (rawQuery: string) => {
       setLoading(true);
@@ -24,22 +38,26 @@ export default function Page() {
       const detected = parseVoiceIntent(rawQuery, null);
       const effectiveCategory = detected.category ?? category;
 
-      setCategory(effectiveCategory); // pill-টাও নিজে থেকে বদলে যাবে, ইউজার দেখতে পাবে
+      setCategory(effectiveCategory);
       setBudgetMax(detected.budgetMax);
 
       try {
-        const { products } = await sendVoiceRequest(
+        const { products, cart: updatedCart, message } = await sendVoiceRequest(
           rawQuery,
           effectiveCategory,
+          sessionId
         );
         setServices(products);
+        setCart(updatedCart);
+        setAiMessage(message);
       } catch {
         setServices([]);
+        setAiMessage("Something went wrong. Please try again.");
       } finally {
         setLoading(false);
       }
     },
-    [category],
+    [category, sessionId]
   );
 
   return (
@@ -85,6 +103,39 @@ export default function Page() {
           isRunning={loading}
         />
       </section>
+
+      {/* AI message (confirmation / cart feedback) */}
+      {aiMessage && (
+        <motion.p
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 rounded-xl border border-signal/30 bg-signal/10 px-4 py-3 text-sm text-signal"
+        >
+          {aiMessage}
+        </motion.p>
+      )}
+
+      {/* Cart panel */}
+      {cart.length > 0 && (
+        <section className="mt-10 rounded-2xl border border-line bg-panel p-6">
+          <h2 className="font-display text-lg font-medium text-ink">
+            Your cart ({cart.length})
+          </h2>
+          <ul className="mt-4 space-y-3">
+            {cart.map((item, i) => (
+              <li
+                key={`${item.id}-${i}`}
+                className="flex items-center justify-between rounded-xl border border-line bg-panel2 px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-medium text-ink">{item.name}</p>
+                  <p className="text-xs text-slate">${item.price.toFixed(2)} · ★{item.rating}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Results */}
       <section className="mt-14">

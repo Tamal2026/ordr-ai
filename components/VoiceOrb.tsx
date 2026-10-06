@@ -28,7 +28,7 @@ export default function VoiceOrb({ onFinalTranscript, disabled }: VoiceOrbProps)
     const recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = "en-US";
+    recognition.lang = "en-GB";
 
     recognition.onresult = (event: any) => {
       let finalText = "";

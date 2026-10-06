@@ -25,14 +25,20 @@ export default function VoicePlayground({
   isRunning: boolean;
 }) {
   useEffect(() => {
-    if (!query) onQueryChange(SAMPLE_PROMPTS[category]);
+    
+    const isStillASamplePrompt = Object.values(SAMPLE_PROMPTS).includes(query);
+    if (!query || isStillASamplePrompt) {
+      onQueryChange(SAMPLE_PROMPTS[category]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   return (
     <div className="rounded-2xl border border-line bg-panel p-6">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-display text-lg font-medium text-ink">Try it without your mic</h3>
+        <h3 className="font-display text-lg font-medium text-ink">
+          Try it without your mic
+        </h3>
         <span className="text-xs text-slate">Sample request</span>
       </div>
 
