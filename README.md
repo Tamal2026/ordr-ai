@@ -1,72 +1,55 @@
 # OrdR AI
 
-OrdR AI is a voice first booking assistant. You just say what you need and it shows you the three best matches in about two seconds. No forms, no scrolling, no phone calls.
+Voice first booking assistant. Say what you need and get the top 3 matches in about 2 seconds.
 
-For example you can say "I need to see a doctor sometime next week" and it will show you the top three clinics with price and rating.
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Open_Now-black?style=for-the-badge)](https://ordr-ai.vercel.app)
 
-## Why I made this
+**Live Link:** https://ordr-ai.vercel.app
 
-I noticed that booking something online takes too many steps. You pick a category, set filters, scroll a long list and then decide. I wanted to see if one spoken sentence could replace all of that. This is version one of that idea.
+Use Chrome or Edge for voice. In other browsers you can type.
 
-## What it can do right now
+## Try it
 
-1. You can speak or type your request
-2. It works for four categories: medical clinic, barber shop, legal office and restaurant
-3. It understands the category from what you say, so you do not need to click the category button first
-4. It understands budget and rating when you mention them
-5. It shows the top three matches with image, price and rating
-6. Each card has a booking button that shows a demo confirmation
-7. Small speech mistakes like wrong spelling are handled by the AI
+Say or type something like
+
+* I need to see a doctor next week
+* Barber for a fade this Saturday
+* Table for 4 tonight around 7:30
+
+## What it does
+
+* Works for medical clinic, barber shop, legal office and restaurant
+* Understands category budget and rating from one sentence
+* Shows the top 3 results with image price and rating
+* Fixes small speech mistakes using AI
+* Book button shows a demo confirmation
 
 ## How it works
 
-When you send a request, this is what happens behind the scenes.
+Voice to text in the browser then Next.js API route then n8n webhook then Groq AI finds the intent then n8n reads Google Sheets then filters and ranks then top 3 come back.
 
-1. Your voice is turned into text in the browser using the Web Speech API
-2. The Next.js app sends the text to its own API route
-3. That route forwards it to an n8n webhook
-4. n8n checks if the request is valid
-5. Groq AI reads the sentence and finds the category, budget and rating
-6. n8n merges the AI result with the basic result from the browser
-7. n8n reads the data from Google Sheets
-8. The data is filtered and ranked and the top three are picked
-9. The result goes back to the website and the cards appear
+The AI only understands the sentence. All results come from my own Google Sheet so it never makes up a business or a price.
 
-The AI only understands the sentence. It never makes up any business or price. All the results come from my own Google Sheet, so there is no hallucination problem.
+## Tech
 
-## Tech stack
+Next.js · Tailwind CSS · Framer Motion · Web Speech API · n8n · Groq · Google Sheets · Vercel
 
-1. Next.js with App Router
-2. Tailwind CSS and Framer Motion
-3. Web Speech API for voice
-4. n8n for the workflow
-5. Groq with the openai/gpt-oss-20b model
-6. Google Sheets as the data source
-7. Vercel for hosting
+## What I learned
 
-## Things I faced while building
+Most bugs were small things between systems like a wrong node reference or an old category left in a prompt. Checking each node output one by one was the fastest way to fix them.
 
-This project taught me a lot because many small things broke. Some of the big ones:
+## Next
 
-1. Wrong node reference in n8n. I used the wrong way to read data from an earlier node and the whole flow crashed
-2. Groq removed two models that I was using. I had to switch to a new one
-3. Old category names were still inside the validation and the AI prompt after I changed the project idea
-4. Google Sheets column names were in capital letters but my code was looking for small letters
-5. A wrong expression in the n8n response made the website receive text instead of a list
-6. Brave browser does not support the Web Speech API. Use Chrome or Edge for the voice feature
+* Real booking saved in Google Sheets
+* Session memory so you can say "book number 3"
+* Webhook security and Slack error alerts
 
-## Note about the demo
+## Contact
 
-The booking button is a demo for now. It shows a confirmation but does not save anything. Real booking is part of the next version.
+Tamal Krishna
 
-## What I want to add next
+GitHub: https://github.com/Tamal2026
 
-1. Real booking saved in n8n and Google Sheets
-2. Session memory so the AI remembers earlier results and you can say "book number 3"
-3. Better voice recognition for different accents
-4. More categories like hotels and fashion
-5. Webhook security and error alerts on Slack
+LinkedIn: https://linkedin.com/in/tamalkrishna
 
-## About me
-
-I am a student from Bangladesh learning how to build AI products. I made this project to learn how language models, automation tools and real apps work together. Feedback is always welcome.
+Email: tamalkrishnadev@gmail.com
