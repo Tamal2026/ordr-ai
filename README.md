@@ -18,11 +18,11 @@ Say or type something like
 
 ## What it does
 
-* Works for medical clinic, barber shop, legal office and restaurant
-* Understands category budget and rating from one sentence
-* Shows the top 3 results with image price and rating
-* Fixes small speech mistakes using AI
-* Book button shows a demo confirmation
+* Works for medical clinic, barber shop, legal office and restaurant.
+* Understands category budget and rating from one sentence.
+* Shows the top 3 results with image price and rating.
+* Fixes small speech mistakes using AI.
+* Book button shows a demo confirmation.
 
 ## How it works
 
